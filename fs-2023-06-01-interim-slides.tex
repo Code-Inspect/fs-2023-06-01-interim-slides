@@ -1,5 +1,5 @@
 % presentation | handout
-\documentclass[aspectratio=169,usepdftitle=true,handout,10pt]{beamer}
+\documentclass[aspectratio=169,usepdftitle=true,presentation,10pt]{beamer}
 
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
@@ -76,6 +76,7 @@
 \def\rotHead#1{\llap{\rotatebox{-52}{{\rlap{\scriptsize#1}}}}}
 \newcommand<>\HItem[1]{\def\Mixin{30!white}\only#2{\def\Mixin{}}\begin{colormixin}{\Mixin}\item#1\end{colormixin}}
 \begin{frame}[c]{\insertsection}
+\def\arraystretch{1.15}\vspace*{-\medskipamount}%
 \begin{columns}[onlytextwidth,c]
 \column{.3\linewidth}
 \begin{uncoverenv}<2->
@@ -90,6 +91,7 @@
       \HItem<handout:7|2,9>{Loops}
       \HItem<handout:8|2,10>{Controlflow}
       \HItem<handout:9|2,11>{Data-Access}
+      \HItem<handout:10|2,12>{Meta}
    \end{itemize}
 \end{uncoverenv}
 \column{.69\linewidth}
@@ -120,10 +122,136 @@
 % \T{attachNamespace} & 2 & 0 \\
 % \end{tabular}
 \begin{tabular}{l rrr rrr rrr}
-   \multicolumn{10}{c}{\textbf{Ways of Import}} \smallskip\\
+   \multicolumn{10}{c}{\textbf{Ways of import}} \smallskip\\
    \textit{Package} & 15\,788 & 637 & 5\,224 & 911 & 887 & 165 & 66 & 21 & 2\\
-   \textit{User} & 1\,876 & 42 & 17\,349 & 1\,514 & 24 & 6 & 0 & 42 & 0\smallskip\\
+   \textit{User} & 1\,876 & 42 & 17\,349 & 1\,514 & 24 & 6 & 0 & 42 & 0\\
    & \rotHead{::} & \rotHead{:::} & \rotHead{library} & \rotHead{require} & \rotHead{req.Ns.} & \rotHead{by variable} & \rotHead{load Ns.} & \rotHead{*apply} & \rotHead{attach Ns.}
+\end{tabular}\qquad~~
+\end{onlyenv}
+\begin{onlyenv}<4|handout:2>
+\begin{tabular}{lrr}
+   \multicolumn{3}{c}{\textbf{Comments}} \\
+   & \textit{Package Code} & \textit{User Code} \smallskip\\
+   Roxygen/Total &492\,510/884\,950 & 1\,486/311\,344 \bigskip\\
+   \multicolumn{3}{c}{\textbf{Used Imports}} \\
+   & \textit{Package Code} & \textit{User Code} \smallskip\\
+   \T{@import} & 305 & 8  \\
+   \T{@importFrom} & 5\,587& 6 \\
+   \T{@importClassesFrom} & 6 & 0\\
+   \T{@importMethodsFrom} & 8 & 0\\
+   \T{@useDynLib} & 605 & 0\\
+\end{tabular}
+\end{onlyenv}
+\begin{onlyenv}<5|handout:3>
+\begin{tabular}{lrr}
+% \multicolumn{3}{c}{\textbf{Defined Functions}} \\
+& \textit{Package Code} & \textit{User Code} \smallskip\\
+\T{Total} & 131\,953 & 12\,122  \\
+\T{Lambdas} & 22 & 0 \\
+\T{Assigned} & 96\,161& 6\,821\\
+\T{Direct-Call} & 91& 0\\
+\T{Nested} & 25\,521& 2\,240\\
+\T{Recursive} & 1\,058& 10\\
+\end{tabular}
+\end{onlyenv}
+% Function calls
+\begin{onlyenv}<6|handout:4>
+\begin{tabular}{rl@{\hskip4em}rl}
+% \multicolumn{3}{c}{\textbf{Called Functions}} \\
+\multicolumn{2}{c}{\textit{Package Code}} & \multicolumn{2}{c}{\textit{User Code}} \smallskip\\
+1\,956\,887 & \textit{all} & 980\,964 & \textit{all} \\
+133\,650 & \T{c}                & 110,020 & \T{c}   \\
+ 57\,398 & \T{list}             &  19,849 & \T{length}     \\
+ 56\,842 & \T{length}           &  18,975 & \T{library} \\
+ 50\,534  & \T{expect\_equal}   &  18,797 & \T{summary}      \\
+ 42\,279  & \T{is.null}         &  18,009 & \T{aes}       \\
+ 37\,238  & \T{test\_that}      &  16,303 & \T{list}      \\
+ 33\,688  & \T{return}          &  13,162 & \T{element\_text}     \\
+\end{tabular}
+\end{onlyenv}
+\begin{onlyenv}<7|handout:5>
+\begin{tabular}{lrr}
+% \multicolumn{3}{c}{\textbf{Defined Functions}} \\
+& \textit{Package Code} & \textit{User Code} \smallskip\\
+{Numbers} & 1\,094\,489 & 844\,344  \\
+\quad{Imaginary} & 1\,436 & 37 \\
+\quad{Integers} & 106\,843 & 346 \\
+\quad{FloatHex} & 12 & 0 \\
+{Logical} & 164\,249 & 64\,421\\
+{Special} & 94\,590 & 20\,586\\ % NULL | NA | ...
+{Strings} & 852\,103 & 488\,999\\
+\end{tabular}\\
+TODO: Percentages?
+\end{onlyenv}
+\begin{onlyenv}<8|handout:6>
+\begin{tabular}{lrr}
+% \multicolumn{3}{c}{\textbf{Defined Functions}} \\
+& \textit{Package Code} & \textit{User Code} \smallskip\\
+{Operator}   & 772\,263 & 396\,999  \\
+\quad{\LeftArrow}        & 730\,160 & 323\,286 \\
+\quad{\DoubleLeftArrow}  & 4\,211 & 431 \\
+\quad{=}                 & 37\,048 & 71\,769 \\
+\quad{\RightArrow}       & 145 & 1\,004 \\ % grep -o "\"->\"" assignmentOperator.txt | wc -l
+\quad{\DoubleRightArrow} & 1 & 0 \\
+\quad{\textit{Others}}            & 698 & 509 \\
+{Special} & 82\,800 & 86\,171\\ % with bracket
+{Nested} & 6\,479 & 1\,680\\ % Directly
+\end{tabular}
+\end{onlyenv}
+\begin{onlyenv}<9|handout:7>
+\begin{tabular}{lrr}
+% \multicolumn{3}{c}{\textbf{Defined Functions}} \\
+& \textit{Package Code} & \textit{User Code} \smallskip\\
+\T{for}    & 19\,298 & 13\,679 \\
+\T{while}  & 1\,357 & 389 \\
+\T{repeat} & 233 & 50 \\
+\T{break} & 1\,112 & 205 \\
+\T{next} & 932 & 282 \\
+\end{tabular}
+\end{onlyenv}
+\begin{onlyenv}<10|handout:8>
+\begin{tabular}{lrr}
+% \multicolumn{3}{c}{\textbf{Defined Functions}} \\
+& \textit{Package Code} & \textit{User Code} \smallskip\\
+{if-then-else}    & 216\,722 & 13\,773 \\
+\quad{nested} & 152\,022 & 9\,711 \\
+\quad{constant} & 750 & 69 \\
+\quad{variable} & 24\,844 & 723\\
+switch-case & 3\,421 & 46 \\
+\end{tabular}
+\end{onlyenv}
+\begin{onlyenv}<11|handout:9>
+\begin{tabular}{lrr}
+% \multicolumn{3}{c}{\textbf{Defined Functions}} \\
+& \textit{Package Code} & \textit{User Code} \smallskip\\
+\T{[}           & 186\,893 & 188\,888\\
+\quad{empty}   &  1\,257 & 204\\
+\quad{constant} & 43\,684 & 39\,587\\
+\quad{variable} & 63\,805 & 42\,970\\
+% \quad{comma} &  & \\
+\T{[[}           & 62\,904 & 17\,248\\
+\quad{empty}   & 10 & 0 \\
+\quad{constant} & 30\,508 & 8\,601 \\
+\quad{variable} & 29\,625  & 8\,011 \\
+chained & 87\,134 & 90\,362\\
+by name & 271\,577 & 283\,081\\% or nested
+by slot & 19\,980 & 3\,198\\
+\end{tabular}
+\end{onlyenv}
+\begin{onlyenv}<12|handout:10>
+\begin{tabular}{lrr}
+& \textit{Package Code} & \textit{User Code} \smallskip\\
+Count & 25\,691 & 4\,230 \\
+{File Length}           &  & \\
+\quad{min} & 1 & 1 \\
+\quad{max} & 29\,211 & 7\,100\\
+\quad{avg} & 145 & 348 \\
+\quad{median} & 70 & 184 \\
+{Line Length}           &  & \\
+\quad{min} & 0 & 0 \\
+\quad{max} & 116\,068 & 33\,341 \\
+\quad{avg} & 32 & 44 \\
+\quad{median} & 28 & 36 \\
 \end{tabular}
 \end{onlyenv}
 \end{columns}
