@@ -30,7 +30,12 @@
 \usepackage{makecell}
 \let\say\enquote
 \addbibresource{references.bib}
-\outro{\frametitle{Bibliography}\printBibCommand}
+\outro{\frametitle{Open Questions} \begin{itemize}
+   \itemsep10pt
+   \item<2-> Which other features are of interest? (if any)
+   \item<2-> Which domain should we use for the quads?
+   \item<2-> What parts of the dataflow-information are important?
+\end{itemize}}
 
 \usetikzlibrary{arrows.meta,backgrounds,shapes.symbols,decorations.pathreplacing,shapes.geometric}
 \usepackage{forest}
@@ -258,13 +263,61 @@ Count & 25\,691 & 4\,230 \\
 \end{frame}
 
 \section[Quad Generation]{Quad Generation}
-\begin{frame}{\insertsection}
-
+\begin{frame}[fragile]{\insertsection}
+\begin{itemize}
+   \item<2-> We can generate Quads from the normalized AST
+   \item<3-> Limited to files that can be parsed
+\end{itemize}
+\bigskip
+\begin{uncoverenv}<4->
+\lstfs{5}\soldisablenumhl
+\begin{minted}{void}
+<https://uni-ulm.de/r-ast/filename/0> <https://uni-ulm.de/r-ast/type> "exprlist" <filename> .
+<https://uni-ulm.de/r-ast/filename/0> <https://uni-ulm.de/r-ast/children-0> <https://uni-ulm.de/r-ast/filename/1> <filename> .
+<https://uni-ulm.de/r-ast/filename/1> <https://uni-ulm.de/r-ast/location> <https://uni-ulm.de/r-ast/filename/2> <filename> .
+<https://uni-ulm.de/r-ast/filename/2> <https://uni-ulm.de/r-ast/start> <https://uni-ulm.de/r-ast/filename/3> <filename> .
+<https://uni-ulm.de/r-ast/filename/3> <https://uni-ulm.de/r-ast/line> "1"^^<http://www.w3.org/2001/XMLSchema#integer> <filename> .
+<https://uni-ulm.de/r-ast/filename/3> <https://uni-ulm.de/r-ast/column> "1"^^<http://www.w3.org/2001/XMLSchema#integer> <filename> .
+<https://uni-ulm.de/r-ast/filename/2> <https://uni-ulm.de/r-ast/end> <https://uni-ulm.de/r-ast/filename/4> <filename> .
+<https://uni-ulm.de/r-ast/filename/4> <https://uni-ulm.de/r-ast/line> "1"^^<http://www.w3.org/2001/XMLSchema#integer> <filename> .
+<https://uni-ulm.de/r-ast/filename/4> <https://uni-ulm.de/r-ast/column> "1"^^<http://www.w3.org/2001/XMLSchema#integer> <filename> .
+<https://uni-ulm.de/r-ast/filename/1> <https://uni-ulm.de/r-ast/lexeme> "1" <filename> .
+<https://uni-ulm.de/r-ast/filename/1> <https://uni-ulm.de/r-ast/type> "NUM_CONST" <filename> .
+\end{minted}
+\end{uncoverenv}
+\begin{itemize}
+   \item<5-> Question: Which domain should we use?
+\end{itemize}
 \end{frame}
 
 \section[Ontology]{Ontology}
 \begin{frame}{\insertsection}
-
+\begin{uncoverenv}<2->
+\vspace*{-1.5\baselineskip}\tiny\begin{forest}
+   for tree={font=\ttfamily,grow=east,anchor=west,child anchor=west,l sep=2cm}
+   [Base
+      [RUnaryOp,grow=east,anchor=west,child anchor=west[RLogicalUnaryOp][RArithmeticUnaryOp]]
+      [RExpressionList]
+      [RFunctionCall]
+      [RRepeatLoop]
+      [RIfThenElse]
+      [RWhileLoop]
+      [RForLoop]
+      [RFunctionDefinition]
+      [RArgument]
+      [RComment]
+      [RLogical]
+      [RSymbol]
+      [RBreak]
+      [RNumber]
+      [RString]
+      [RBinaryOp,grow=east,anchor=west,child anchor=west[RAssignmentOp][RComparisonBinaryOp][RArithmeticBinaryOp][RLogicalBinaryOp]]
+   ]
+\end{forest}
+\end{uncoverenv}
+\begin{tikzpicture}[overlay,remember picture]
+   \onslide<3->{\node[left=5mm,yshift=-5mm,font=\scriptsize\sffamily,color=gray] at(current page.east) {\link{https://github.com/Code-Inspect/ontology/issues/1}{https://github.com/Code-Inspect/ontology/issues/1}};}
+\end{tikzpicture}
 \end{frame}
 
 \end{document}
