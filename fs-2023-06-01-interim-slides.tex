@@ -1,0 +1,142 @@
+% presentation | handout
+\documentclass[aspectratio=169,usepdftitle=true,handout,10pt]{beamer}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{microtype}
+
+\usepackage{etoolbox,tabularx,array}
+\makeatletter
+\appto\input@path{{lib/color-palettes/}{lib/sopra-collection/sopra-listings}{lib/code-animation/}}
+
+\usepackage{lib/color-palettes/color-palettes}
+\colorlet{paletteA}{paletteA!80!black}
+\colorlet{paletteB}{paletteB!80!black}
+\colorlet{paletteC}{paletteC!80!black}
+\colorlet{paletteD}{paletteD!80!black}
+\usepackage[cpalette,encoding,defaultfont,fakeminted]{lib/sopra-collection/sopra-listings/sopra-listings}
+
+\solLoadLanguage{R}
+\solsetmintedstyle{plain}
+\usepackage{lib/code-animation/code-animation}
+\SetCodeAnimationFadeOutMixin{!10!btdm@background}
+\CodeAnimationsWithFadeOut
+
+\usepackage[lightmode]{lib/beamer-themes/digital-minimal/beamerthemedigital-minimal}
+\usepackage[backend=bibtex8,style=numeric]{biblatex}
+\usepackage{csquotes}
+\usepackage{siunitx}
+\usepackage{makecell}
+\let\say\enquote
+\addbibresource{references.bib}
+\outro{\frametitle{Bibliography}\printBibCommand}
+
+\usetikzlibrary{arrows.meta,backgrounds,shapes.symbols,decorations.pathreplacing,shapes.geometric}
+\usepackage{forest}
+
+\input{link.tex}
+
+% too short of a presentation
+\sectionbannerfalse
+
+\title{Interesting Patterns in R Code}
+\setauthormailsubject{CodeInspector\%20|\%20Interim\%201}
+\subtitle{CodeInspector --- Monthly-Meeting}
+\setfootmarker{CodeInspector~\faAngleRight\ Monthly}
+
+\date{\today}
+
+\author[F.~Sihler]{Florian Sihler}
+\email{florian.sihler@uni-ulm.de}
+
+\errorcontextlines9999
+% twoheadleftarrow
+% TODO: \raisebox{.025ex}{\guilsinglleft}\kern-.65ex---
+\def\LeftArrow{\text{\BeginAccSupp{method=escape,ActualText={<-}}\(\leftarrow\)\EndAccSupp{}}}
+\def\RightArrow{\text{\BeginAccSupp{method=escape,ActualText={<-}}\(\rightarrow\)\EndAccSupp{}}}
+\def\DoubleLeftArrow{\text{\BeginAccSupp{method=escape,ActualText={<<-}}\(\twoheadleftarrow\)\EndAccSupp{}}}
+\def\DoubleRightArrow{\text{\BeginAccSupp{method=escape,ActualText={<<-}}\(\twoheadrightarrow\)\EndAccSupp{}}}
+\lstset{add to literate={<-}{{{\!\LeftArrow\!}}}2
+   {<<-}{{{\!\DoubleLeftArrow\!}}}2
+   {->}{{{\!\RightArrow\!}}}2
+   {->>}{{{\!\DoubleRightArrow\!}}}2
+}
+
+\addtobeamertemplate{footline}{\begin{tikzpicture}[overlay,remember picture]
+   \node[below left=4.65mm,btdm@softtext] at (current page.north east)
+      {\Large\textbf{\MakeUppercase{uulm-sp}}};
+\end{tikzpicture}}{}
+
+\begin{document}
+\titleframe<2->
+
+\section[Feature Extraction]{Feature Extraction}
+\def\Package#1{\T{\link{https://www.rdocumentation.org/packages/stats/#1}{#1}}}
+\def\rotHead#1{\llap{\rotatebox{-52}{{\rlap{\scriptsize#1}}}}}
+\newcommand<>\HItem[1]{\def\Mixin{30!white}\only#2{\def\Mixin{}}\begin{colormixin}{\Mixin}\item#1\end{colormixin}}
+\begin{frame}[c]{\insertsection}
+\begin{columns}[onlytextwidth,c]
+\column{.3\linewidth}
+\begin{uncoverenv}<2->
+   \begin{itemize}
+      \itemsep6pt
+      \HItem<handout:1|2,3>{Packages}
+      \HItem<handout:2|2,4>{Roxygen2}
+      \HItem<handout:3|2,5>{Function Definitions}
+      \HItem<handout:4|2,6>{Function Calls}
+      \HItem<handout:5|2,7>{Values}
+      \HItem<handout:6|2,8>{Assignments}
+      \HItem<handout:7|2,9>{Loops}
+      \HItem<handout:8|2,10>{Controlflow}
+      \HItem<handout:9|2,11>{Data-Access}
+   \end{itemize}
+\end{uncoverenv}
+\column{.69\linewidth}
+\footnotesize\centering
+\begin{onlyenv}<3|handout:1>
+\begin{tabular}{rl@{\hskip4em}rl}
+   \multicolumn{4}{c}{\textbf{Top imported packages}} \\
+   \multicolumn{2}{c}{\textit{Package Code}} & \multicolumn{2}{c}{\textit{User Code}} \smallskip\\
+   1\,112 & \Package{stats} & 1\,212 & \Package{ggplot2}   \\
+    934 & \Package{utils}   & 1\,179 & \Package{dplyr}     \\
+    848 & \Package{dplyr}   &  772 & \Package{tidyverse} \\
+    812 & \Package{rlang}   &  623 & \Package{lme4}      \\
+    802 & \Package{testhat} &  455 & \Package{car}       \\
+    674 & \Package{cli}     &  408 & \Package{plyr}      \\
+    661 & \Package{withr}   &  319 & \Package{tidyr}     \\
+\end{tabular}\bigskip\\
+% \begin{tabular}{lrr}
+%    \multicolumn{3}{c}{\textbf{Ways of Import}} \\
+%    & \textit{Package Code} & \textit{User Code} \smallskip\\
+% \T{::} & 15\,788 & 1\,876  \\
+% \T{:::} & 637 & 42 \\
+% \T{library} & 5\,224 & 17\,349 \\
+% \T{require} & 911 & 1\,514 \\
+% \T{requireNamespace} & 887 & 24 \\
+% \textit{by variable} & 165  & 6 \\
+% \T{loadNamespace} & 66 & 0 \\
+% \T{*apply} & 21 & 42 \\
+% \T{attachNamespace} & 2 & 0 \\
+% \end{tabular}
+\begin{tabular}{l rrr rrr rrr}
+   \multicolumn{10}{c}{\textbf{Ways of Import}} \smallskip\\
+   \textit{Package} & 15\,788 & 637 & 5\,224 & 911 & 887 & 165 & 66 & 21 & 2\\
+   \textit{User} & 1\,876 & 42 & 17\,349 & 1\,514 & 24 & 6 & 0 & 42 & 0\smallskip\\
+   & \rotHead{::} & \rotHead{:::} & \rotHead{library} & \rotHead{require} & \rotHead{req.Ns.} & \rotHead{by variable} & \rotHead{load Ns.} & \rotHead{*apply} & \rotHead{attach Ns.}
+\end{tabular}
+\end{onlyenv}
+\end{columns}
+\end{frame}
+
+\section[Quad Generation]{Quad Generation}
+\begin{frame}{\insertsection}
+
+\end{frame}
+
+\section[Ontology]{Ontology}
+\begin{frame}{\insertsection}
+
+\end{frame}
+
+\end{document}

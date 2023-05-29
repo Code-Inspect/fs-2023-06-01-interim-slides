@@ -1,0 +1,293 @@
+\ProvidesPackage{code-animation}[2022/05/22 EagleoutIce - animating runs through code with beamer]
+
+% TODO: customize beamer configuration
+\RequirePackage{etoolbox}
+\RequirePackage{listings}
+\RequirePackage{tikz}
+\usetikzlibrary{tikzmark}
+
+\RequirePackage{fontawesome} % used for default symbols
+\RequirePackage{xxcolor} % mixin
+
+% TODO: allow for symbolic markers in the animations to reuse them instead of the animation number (e.g -> storeXX syntax) (StoreHandoutTo, StoreAnimationTo)
+% we may want to add a new literate to be used in the code:
+% TODO:
+\def\ca@lst@addToLiterate#1{%
+    \protected@edef\lst@literate{%
+        \unexpanded\expandafter{\lst@literate}\unexpanded{#1}%
+    }%
+}
+\lst@Key{code-animations@add to literate}{}{\ca@lst@addToLiterate{#1}}
+% TODO: use those in the code so they are available with the star option
+
+% TODO: redefine to kill that :D
+\def\ca@colormixin@env{colormixin}
+
+% i do not use groups as this has problems with lst
+% as they can not be nested, one storage is enough
+\def\SetCodeAnimationFadeOutMixin#1{\def\ca@colormixin@suff{#1}}
+\def\ca@colormixin@suff{!15!lightgray}
+
+\let\ca@oldcolormixin\@empty
+
+\def\@ca@@fadeout@start{%
+    \let\ca@Mixin\ca@colormixin@env
+    \let\ca@oldcolormixin\colorcurrentmixin
+    \edef\colorcurrentmixin{\ca@colormixin@suff\colorcurrentmixin}%
+    \@declaredcolor{.}%
+}
+
+\def\@ca@fadeout@start#1{%
+    \ca@InCurrentLineActive{#1}%
+        \@empty
+        {%
+            \ca@InOtherLineActive{#1}%
+                \@empty
+                {\@ca@@fadeout@start}%
+        }%
+    \relax
+}
+
+% guard to not close unnecessary
+\def\@ca@fadeout@end{%
+    \ifx\ca@colormixin@env\ca@Mixin
+        \let\colorcurrentmixin\ca@oldcolormixin
+        \@declaredcolor{.}%
+    \fi
+    \let\ca@Mixin\relax
+}
+
+% TODO: include comments
+\def\CodeAnimationsNoFadeOut{%
+    \let\ca@fadeout@start\@gobble
+    \let\ca@fadeout@end\@empty
+}
+
+\def\CodeAnimationsWithFadeOut{
+        \let\ca@fadeout@start\@ca@fadeout@start
+        \let\ca@fadeout@end\@ca@fadeout@end
+}
+\CodeAnimationsWithFadeOut
+
+\def\ca@Strut{%
+    \vphantom{%
+        \sol@font@fs@normal\sol@styles@lst@basic\strut
+    }%
+}
+
+% TODO: use firstoftwo and second of two
+\def\ca@InCurrentLineActive#1#2#3{%
+    % AND are we in animation Run? otherwise always # negatives to fake this check!
+    \ifnum\ca@anim@currentline=0#2\else
+    % are we in the current line?
+    \expandafter\ifnum\number\csname c@codeanim@#1@lc\endcsname=\ca@anim@currentline
+    #2\else#3\fi\fi
+}
+
+\newif\if@ca@@active@found@
+\def\ca@InOtherLineActive#1#2#3{%
+    \global\@ca@@active@found@false
+    \foreach\k in \ca@anim@otherhighlights {% TODO: Speed this up heavily by having macros and check for their existence
+        \ifnum\k=\number\csname c@codeanim@#1@lc\endcsname\relax \global\@ca@@active@found@true\breakforeach\fi
+    }%
+    \if@ca@@active@found@#2\else#3\fi% no groups :)
+}
+
+% the initial comments marker
+\def\ca@comments@from{0}
+% #1 is a coordinate prefix to be used outside
+\newcommand\ca@AnimateCode[1][@]{% just to block spaces and stuff for sure
+\ifcsname c@codeanim@#1@lc\endcsname\else
+\expandafter\newcount\csname c@codeanim@#1@lc\endcsname\fi
+% reset counter in any way!
+\global\csname c@codeanim@#1@lc\endcsname0\relax
+% we appto locally to increment the current line counter
+\appto\lsthk@EOL{%
+    \tikzmarknode{ca@#1-\expandafter\the\csname c@codeanim@#1@lc\endcsname @end}{\ca@Strut}%
+}%
+\appto\lsthk@InitVars{%
+    \tikzmarknode{ca@#1-\expandafter\the\csname c@codeanim@#1@lc\endcsname @end}{\ca@Strut}%
+}%
+\appto\lsthk@OnNewLine{%
+    % get the end marker for this line
+    % TODO: tikzmarks listing lib
+    % step the line id counter (ensures unique)
+    \global\advance\csname c@codeanim@#1@lc\endcsname by1\relax
+    % done!
+    \ca@fadeout@end
+}%
+% hook the start marker at the beginning:
+% TODO: maybe embed them just around escapings?
+\preto\lsthk@OutputBox{\ca@fadeout@start{#1}\appto\lst@righthss{\ca@fadeout@end}}% box to be in the same group
+% \appto\lsthk@OutputToken{\ca@fadeout@end}% will automatically hide if not in env
+\appto\lsthk@EveryPar{% we do not do this multiple (in case of line breaks) to be safe
+    % with markers, therefore we do not use EveryLine using empty so it does not jump!
+    \tikzmarknode{ca@#1-\expandafter\the\csname c@codeanim@#1@lc\endcsname @start}{\ca@Strut}%
+}%
+
+% #1 allows for horiz shift
+\newcommand\AnimLoc[2][0pt]{\rlap{\hspace*{##1}\tikzmarknode{ca@#1-\expandafter\the\csname c@codeanim@#1@lc\endcsname @##2}{\ca@Strut}}\expandafter\xdef\csname CodeAnim#1-##2\endcsname{ca@#1-\expandafter\the\csname c@codeanim@#1@lc\endcsname @##2}}%
+% furthermore we want to configure some numbers with beamer animations!
+% TODO: support for mid-code highlights by literates! like @ as a marker?!
+\ca@DecodeHandouts
+\ca@DecodeAnimations
+}
+\newcommand\GetAnimLoc[2][@]{\csname CodeAnim#1-#2\endcsname}
+% we make it so that any item is *command* :)
+\def\ca@Record#1#2{\immediate\protected@write\@auxout{}{\protect\def\protect#1{#2}}\xdef#1{#2}}
+\def\CodeAnimGet#1{\@ifundefined{#1}{0}{\csname#1\endcsname}}
+\def\@AnimationCommands{%
+    \mode<all>{\def\ca@reset{\def\ca@comments@from{\@anim@on}}}%
+    \mode<handout>{\def\ca@reset{% directly reset
+        % if anim@on is below current:
+        \ifnum\@anim@on<\ca@MapFromHandout{\insertslidenumber}\relax
+            \xdef\ca@comments@from{\@anim@on}%
+        \else\def\ca@comments@from{\@anim@on}\fi
+    }}%
+    % the simple animation
+    \def\ca@simple##1{\def\@anim{##1}}%
+    % shift commentframe
+    \def\ca@resetsimple##1{\ca@simple{##1}\ca@reset}%
+    \def\ca@simpleothers##1:##2\@null{\def\@anim{##1}\def\ca@anim@otherhighlights##2}% note: has to be given in braces!
+    \def\ca@othersonly{\let\ca@anim@curentlocation\@empty\ca@simpleothers}%
+    \def\ca@comment##1:##2\@null{\def\@anim{##1}\def\@comment@text{##2}}%
+    \def\ca@resetcomment{\ca@reset\ca@comment}%
+    \def\ca@hidden{\let\ca@anim@curentlocation\@empty\def\@anim{-1}\def\ca@anim@otherhighlights{}}%
+    \def\ca@custom{% TODO: unify so others use readable syntax as well!
+        \def\Line####1{\def\@anim{####1}}%
+        \def\NextLine{\RelativeLine1}%
+        \def\PreviousLine{\RelativeLine-1}%
+        \def\RelativeLine####1{\edef\@anim{\the\numexpr\old@anim+####1\relax}}%
+        \def\Comment####1{\def\@comment@text{####1}}%
+        \def\Reset{\ca@reset}%
+        \def\Hidden{\ca@hidden}%
+        \def\Forever{\edef\@anim@on{\@anim@on-}}%
+        \def\StoreAnimationTo####1{\ca@Record####1{\@anim@on}}%
+        \def\StoreHandoutTo####1{\ca@Record####1{\ca@MapToHandout{\@anim@on}}}%
+        \mode<all>{\let\StoreTo\StoreAnimationTo}%
+        \mode<handout>{\let\StoreTo\StoreHandoutTo}%
+        \def\Location####1{\def\ca@anim@curentlocation{####1}}%
+        \def\NoLocation{\let\ca@anim@curentlocation\@empty}%
+        \def\Others####1{\def\ca@anim@otherhighlights{####1}}%
+    }%
+}
+% TODO: optional arg for all for custom commands?
+\def\ca@DecodeAnimationCommand#1#2\@null{%
+    \def\@anim{0}\let\@comment@text\@empty \let\ca@anim@otherhighlights\@empty
+    \def\ca@anim@curentlocation{start}% default value(s)
+    \if#1. \ca@resetsimple{#2}\else
+    \if#1: \ca@simpleothers#2\@null\else
+    \if#1o \ca@othersonly#2\@null\else
+    \if#1/ \ca@comment#2\@null\else
+    \if#1| \ca@resetcomment#2\@null\else
+    \if#1* \ca@custom#2\else
+    \if#1h \ca@hidden\else
+    \if#1+ \ca@simple{\the\numexpr\old@anim+1\relax}\else
+    % use the last one! and keep it in memory
+    \if#1- \let\@animcode\@animcode@last\expandafter\ca@DecodeAnimationCommand\@animcode@last\@empty\@empty\@null\else
+    % else do it at a number:
+        \ca@simple{#1#2}%
+    \fi\fi\fi\fi\fi\fi\fi\fi\fi
+    \if#1- \relax\else % minus is never a last!
+        \global\let\@animcode@last\@animcode
+    \fi
+}
+% used for easier expandafter to lock the anim
+% we may globalize:
+\def\ca@Only#1#2#3#4#5{\only<\@anim@on|handout:\ca@MapToHandout{\@anim@on}>{% this is the activator
+    \gdef\ca@comments@from{#1}% re-account comments from this id
+    \gdef\ca@anim@currentline{#2}%
+    \gdef\ca@anim@currentcomment{#3}%
+    \gdef\ca@anim@curentlocation{#4}%
+    \gdef\ca@anim@otherhighlights{#5}% highlight lines (extra) in fade-out
+}}
+
+% if it is not there, do not put it on the handout
+\def\ca@MapToHandout#1{\@ifundefined{ca@@map@#1@}{0}{\csname ca@@map@#1@\endcsname}}
+\def\ca@MapFromHandout#1{\@ifundefined{ca@@map@inv@#1@}{0}{\csname ca@@map@inv@#1@\endcsname}}
+\def\ca@DecodeHandouts{% just create the mappings
+    % TODO: update this to use a custom '<from> -> <to>' syntax or so
+    % TODO: explain how to use this if 1 is to be on 2-10 and 2 is to be on 4 only (by doing it extra)
+    \gdef\@ca@collector{}%
+    \foreach \@from/\@to in \ca@onhandout@list {%
+        % we make this bidirectional to get comment ranges
+        \xappto\@ca@collector{%
+            \noexpand\expandafter\noexpand\edef\noexpand\csname ca@@map@\@from @\endcsname{\@to}%
+            \noexpand\expandafter\noexpand\edef\noexpand\csname ca@@map@inv@\@to @\endcsname{\@from}%
+        }%
+    }%
+    \@ca@collector% keep the definitions local, only the collector is global and
+    % more easily reset than a potentially infinite map :D
+}
+
+\def\ca@DecodeAnimations{%
+    \def\ca@anim@currentline{0}% default if none is active
+    \let\ca@anim@currentcomment\@empty
+    \@AnimationCommands
+    % clear it on the start
+    \only<\ca@firstslide>{\def\ca@comments@from{0}}%
+    \let\@animcode@last\@empty % no last on init
+    \foreach[count=\@anim@on from \ca@firstslide,remember=\@anim as \old@anim (initially 0)] \@animcode in \ca@onslide@list {%
+        % \typeout{[\ca@cdname] AT: \@anim@on; last: \old@anim code: \meaning\@animcode [last \meaning\@animcode@last]}%
+        \expandafter\ca@DecodeAnimationCommand\@animcode\@empty\@empty\@null
+        \expandafter\protected@xdef\csname @\@anim@on @comment@text\endcsname{\@comment@text}%
+        \expandafter\protected@xdef\csname @\@anim@on @comment@location\endcsname{\@anim}%
+        % takeover expanded (protection for comments)
+        \protected@edef\@tmpargs{{\ca@comments@from}{\@anim}{\@comment@text}{\ca@anim@curentlocation}{\ca@anim@otherhighlights}}%
+        \expandafter\ca@Only\@tmpargs\relax
+    }%
+}
+
+\pgfqkeys{/ca@animate@code}{%
+  onslide/.store in=\ca@onslide@list,
+  handout/.store in=\ca@onhandout@list, % list in format {<anim-list>}/<handout>
+  first slide/.store in=\ca@firstslide,
+  defaults/.style={first slide=1,onslide={},handout={}}
+}
+
+\def\ca@Leftmark{\llap{\faAngleRight~}}
+\def\ca@Rightmark{\rlap{\faAngleLeft}}% currently there is a buffer :D
+\def\ca@Botmark{\smash{\clap{\faAngleUp}}}% currently there is a buffer :D
+\def\ca@start{start}\def\ca@end{end}
+% TODO: Botmark and stuff
+\tikzset{ca@CommentNode/.style={font=\sffamily\small\slshape,gray,right=3mm,yshift=.2mm},ca@CommentNode@out/.style={ca@CommentNode,font=\sffamily\footnotesize\slshape,lightgray}}
+\def\ca@DoCodeAnimation{%
+\tikzpicture[overlay,remember picture]%
+% make the line markers :)
+\ifnum\ca@anim@currentline>0 % here we only allow positives (there are no negative lines to place)
+\ifx\ca@anim@curentlocation\ca@start
+    \node[left] at (ca@\ca@cdname-\ca@anim@currentline @start.west) {\ca@Leftmark};
+\else\ifx\ca@anim@curentlocation\ca@end
+    \node[right] at (ca@\ca@cdname-\ca@anim@currentline @end.east) {\ca@Rightmark};
+\else\ifx\ca@anim@curentlocation\@empty% do nothing in that case
+\else
+    \node[below] at (ca@\ca@cdname-\ca@anim@currentline @\ca@anim@curentlocation.south) {\ca@Botmark};
+\fi\fi\fi
+\fi % i want comments with my zero :) but not with negative numbers!
+    % put a comment there:
+\ifnum\ca@anim@currentline<0\else
+    \node[ca@CommentNode] at (ca@\ca@cdname-\ca@anim@currentline @end.east) {\ignorespaces\ca@anim@currentcomment};
+\fi
+% animate all visible ones
+% do not go down:
+% include '='
+\mode<all>{\edef\ca@Maximum{\the\numexpr\insertslidenumber-1\relax}}%
+\mode<handout>{\def\ca@Maximum{\the\numexpr\ca@MapFromHandout{\insertslidenumber}-1\relax}}%
+\ifnum\ca@comments@from>\ca@Maximum\else
+\foreach \@comment@on in {\ca@comments@from,...,\ca@Maximum} {%
+    \@ifundefined{@\@comment@on @comment@text}{}{%
+        \edef\@location{\csname @\@comment@on @comment@location\endcsname}%
+        \ifnum\@location>0 % guard against negatives
+        \node[ca@CommentNode@out] at (ca@\ca@cdname-\@location @end.east) {\ignorespaces\csname @\@comment@on @comment@text\endcsname};
+        \fi
+    }%
+}%
+\fi
+% \node[above right] at(current page.south west) {\insertslidenumber};
+\endtikzpicture}
+
+\newenvironment{AnimateCode}[2][@]{\begingroup
+\pgfqkeys{/ca@animate@code}{defaults, #2}%
+\def\ca@cdname{#1}\ca@AnimateCode[#1]}{\ca@DoCodeAnimation\endgroup}
+
+\endinput

@@ -1,0 +1,263 @@
+\errorcontextlines 99999
+\documentclass{sopra-base}
+
+\usepackage{sopra-documentation}
+\usepackage{sopra-models}
+
+\title{Das 'sopra-models'-Paket}
+\subtitle[Dokumentation für das 'sopra-models'-Paket]{Dokumentation für das 'sopra-models'-Paket | Version \thesomversion}
+
+\duedate{2019-12-2}
+
+\keywords{Dokumentation,sopra-models,sopra,uni ulm,uulm,Paket}
+\authors{Florian Sihler (florian.sihler@uni-ulm.de)}
+
+\group{Die Affenbande}
+\begin{document}
+    \maketitle
+
+\section{Allgemeines}
+\subsection{Warum, wieso, weshalb?}
+    Dieses \LaTeXe-Paket wurde im Rahmen des Sopras im
+    Wintersemester 2019 und Sommersemester 2020 verfasst und dient als
+    Grundlage für die Präsentation von (UML)-Diagrammen und Modellen
+    des \imptext{Teams 20}. Diese Dokumentation wurde zusammen mit der
+    \T{sopra-base.cls} sowie dem Paket \T{sopra-documentation.sty} kreiert.\par
+    \imptext{Wichtig: Ein großteil dieses Pakets basiert auf \T{tikz-uml} und
+    wird hier dokumentiert: \url{https://perso.ensta-paris.fr/~kielbasi/tikzuml/}}.\newline
+    Zum Visualisieren der einzelnen Code-Ausschnitte wird das
+    \T{sopra-listings}-Paket verwendet. Es ist für die Verwendung des Pakets nicht relevant.\par
+    Das zugehörige Paket sollte ebenfalls in dieses Dokument eingebettet sein: \scalebox{0.65}{\attachfile[subject={sopra-models.sty}]{sopra-models.sty}}.
+\subsection{Abhängigkeiten}
+    Dieses Paket bindet die folgenden Paketen mit ein:
+    \begin{multicols}{3}
+        \begin{itemize}
+            \def\pkgparse#1:#2\@nil{%
+                \T{#1}\ifx!#2!\else\textsuperscript{(#2)}\fi%
+            }
+            \foreach \pkg in {tikz:,newfloat:,caption:,float:,ifthen:,xstring:,calc:,pgfopts:} {
+                \item \expandafter\pkgparse\pkg\@nil
+            }
+        \end{itemize}
+    \end{multicols}
+    All diese Pakete sollten Teil der gängigen \LaTeX-Distribution sein. Weiter werden von Ti\textit{k}Z die folgenden
+    Bibliotheken benutzt: \T{backgrounds}, \T{arrows}, \T{shapes}, \T{fit}, \T{shadows} und \T{decorations.markings}.
+
+\subsection{Die Installation}
+    Das Paket wird nicht als \T{.dtx} ausgeliefert, weswegen sich die
+    folgenden Möglichkeiten ergeben:
+    \begin{itemize}
+        \item Das Paket kann in dasselbe Verzeichnis wie das Dokument
+                gesetzt werden. In diesem Fall lautet die Einbindungsanweisung:
+\begin{plainlatex}
+\usepackage{sopra-models}
+\end{plainlatex}
+        \item Das Paket kann in ein Unterverzeichnis/in ein mit
+                dem Dokument ausgeliefertes Verzeichnis gelegt werden. In
+                diesem Fall erfolgt die Angabe durch den (relativen-) Pfad:
+\begin{plainlatex}
+\usepackage{./Mein/Pfad/zu/sopra-models}
+\end{plainlatex}
+        \item Man kann das Paket (mittels eines Symlinks oder ähnlichem)
+              in einen eigenen \emph{texmf}-Baum ablegen.
+              So kann zum Beispiel auf Linux unter der Verwendung von texlive
+              das Paket hier abgelegt werden: \bvoid{\~/texmf/tex/latex/}.
+              Das Verzeichnis kann erstellt und anschließend mittels
+              \bbash{texhash \~/texmf} aktualisiert werden. Nun kann
+              das Paket wie jede andere installierte Paket verwendet werden:
+\begin{plainlatex}
+\usepackage{sopra-models}
+\end{plainlatex}
+    \end{itemize}
+
+\subsection{Weitere Besonderheiten}
+In Version \thesomversion{} (\cmdref{thesomversion}) gibt es keine weiteren
+Besonderheiten.
+
+\section{Paket-Konfiguration}
+    \subsection{Akzeptierte Parameter}
+    Dieses Paket akzeptiert selbst keine weiteren Pakete!
+
+\section{Befehle- und Umgebungen}
+
+Es gilt zu beachten, dass das Präfix \T{env@} nur auf die Natur einer Umgebung hinweist und nicht zum eigentlichen Bezeichner zuzuordnen ist!
+
+\subsection{Allgemeine Befehle}
+
+\begin{command}{thesomversion}{}
+    Liefert die aktuelle Version des Pakets. So ergibt: \cmd{thesomversion}: \thesomversion\\
+    \notetext{Hinweis: über \blatex{\\value\{somversion\}} lässt sich
+    die Version als $4$-stellige Nummer erhalten: \arabic{somversion}.}
+\end{command}
+
+\subsection{Floats}
+
+\begin{environment}{model}{\optArg{Placement}}
+    Ein \T{float}, ganz analog zu \env{figure} und \env{table}.
+\end{environment}
+
+Beispiel:
+\begin{plainlatex}[morekeywords={[3]{model}}]
+\begin{model}
+    \centering
+    Isch bin ein Modell.
+    \caption[Und ich eigentlich kürzer.]{Ich bin der Titel.}
+\end{model}
+\end{plainlatex}
+Ergibt:
+\begin{model}
+    \centering
+    Isch bin ein Modell.
+    \caption[Und ich eigentlich kürzer.]{Ich bin der Titel.}
+\end{model}
+
+Diese lassen durch \cmd{listofmodel} auflisten:
+
+\listofmodel
+
+\subsubsection{Ein Modell}
+Durch die Einbettung des modifizierten \href{https://perso.ensta-paris.fr/~kielbasi/tikzuml/}{Ti\textit{k}Z-UML} sind eine ganze Reihe an Modellen möglich. So zum Beispiel das in \autoref{fig:example-model} (welches auf die Seitenbreite skaliert wird). Ein weiteres Beispiel findet sich in \autoref{fig:example-model2}.
+
+Hübschere Stile werden durch \href{https://github.com/EagleoutIce/lithie-util}{lithie-util} zur Verfügung gestellt.
+
+
+\begin{model}
+    \tikzumlset{fill component=gray!5!white}
+    \resizebox{\linewidth}{!}{%
+\begin{tikzpicture}[%
+        conn/.style={rectangle,draw,fill,gray,rounded corners=1pt,minimum height=0.15cm,minimum height=0.15cm},
+        desc/.style={gray,font=\footnotesize\sffamily,align=center}]
+    \begin{umlcomponent}[body=false,x=1]{Hardwarezugriffsschicht}
+    \end{umlcomponent}
+    \begin{umlcomponent}[artefact=true,stereotype=artefact,x=1,y=-1.75]{oracle}
+    \end{umlcomponent}
+    \umlprovidedinterface[interface={\noexpand\space},distance=-0.65cm,name=data,anchor=east]{Hardwarezugriffsschicht}
+    \node[above right=8pt,xshift=-0.4cm] at(data-1) {Dateizugriff};
+
+    \begin{umlcomponent}[x=11.15,body=false,name=tv]{Teilnehmerverwaltung}
+    \end{umlcomponent}
+    \draw[densely dashed, -angle 45] (oracle) to[edge node={node[right=4pt,scale=0.65] {$\ll$manifest$\gg$}}] (Hardwarezugriffsschicht);
+
+
+    \begin{umlcomponent}[y=-3.75, x=8.65,width=11.5cm,name=dbms]{Datenbankmanagementsystem}
+        \begin{umlcomponent}[symbol=false,body=false,stereotype=subsystem,name=ea]{Ein-/Ausgabesystem}
+        \end{umlcomponent}
+
+        \begin{umlcomponent}[x=5.5,symbol=false,body=false,name=xml]{XML-Schnittstelle}
+        \end{umlcomponent}
+
+        \umlassemblyconnector[interface={\noexpand\space},name=examl]{xml}{ea}
+    \end{umlcomponent}
+    \node[conn] (dbms-w) at(dbms.west|-ea.west) {};
+    \umlassemblyconnector[interface={\noexpand\space},name=edbmsw]{ea}{dbms-w}
+    \umlrequiredinterface[distance=-1.25cm,name=hwd]{dbms-w}
+    \node[below,text width=2cm,align=center] at(hwd.south) {Hardware\-zugriff};
+    \draw[densely dashed, -angle 45] (hwd-|data) to[edge node={coordinate (hwddata)}] (data);
+    \umlassemblyconnector[interface={\noexpand\space},anchors=270 and 98,name=savemed]{tv}{dbms}
+    \node[right=8pt] at (savemed-1.east) {Speichermedium};
+    \begin{umlcomponent}[x=19,symbol=false,body=false,name=lg]{Listengenerator}
+    \end{umlcomponent}
+    \umlassemblyconnector[name=lgtv,interface={\noexpand\space}]{lg}{tv}
+    \node[below=8pt] at(lgtv-1) {Sortierter Zugriff};
+    \umlprovidedinterface[interface={Unsortierter Zugriff},distance=-0.75cm,name=random-access,anchor=10]{tv}
+
+    \draw[fill=white] ($(tv.-4)+(-0.125,0)$) rectangle ($(tv.13)+(0.125,0)$);
+
+    \node[rectangle,draw,above left,yshift=0.66cm,xshift=0.25cm,inner sep=1.5ex] (pag) at(lg.135) {Paginierer};
+    \node[rectangle,draw,above right,yshift=0.66cm,xshift=-0.25cm,inner sep=1.5ex] (sat) at(lg.45) {Satzprogramm};
+    \draw[densely dashed,-angle 45] (pag.-50-|lg.150) -- (lg.150);
+    \draw[densely dashed,-angle 45] (sat.230-|lg.30) to[edge node={coordinate (sathalf)}] (lg.30);
+    \def\rsdot{.}
+    \begin{umlcomponent}[artefact=true,stereotype=artefact,x=19,y=-1.75,name=lear]{Lister v2 ear}
+    \end{umlcomponent}
+    \draw[densely dashed, -angle 45] (lear) to[edge node={node[right=4pt,scale=0.65] (manifest) {$\ll$manifest$\gg$}}] (lg);
+
+    % descs
+    \node[below right=8pt,xshift=0.25cm,desc] (ddata) at(data) {Angebotene\\Schnittstelle};
+    \draw[densely dashed] (ddata) -- (data);
+
+    \node[left=8pt,xshift=-0.85cm,yshift=-1.125cm,desc] (dhwd) at(hwd) {Benötigte Schnittstelle};
+    \draw[densely dashed] (dhwd) -- (hwd);
+
+    \node[below right,yshift=-1.35cm,xshift=0.125cm,desc] (ddbms-w) at(dbms-w) {Einfacher Port};
+    \draw[densely dashed] (ddbms-w) -- (dbms-w);
+
+    \node[below left,yshift=-0.6cm,xshift=-1.75cm,desc] (dhwddata) at(hwddata) {Abhängigkeit, die\\die Kompatibilität\\der beiden Schnitt-\\stellen ausdrückt.};
+    \draw[densely dashed] (dhwddata) -- (hwddata);
+
+    \node[below right,yshift=-2cm,xshift=-0.45cm,desc] (dea) at(ea) {Subsystem};
+    \draw[densely dashed] (dea) -- (ea);
+
+    \node[below right,yshift=-1cm,xshift=-0.45cm,desc] (dexaml) at(examl-1) {Kompositions-\\konnektor};
+    \draw[densely dashed] (dexaml) -- ([yshift=-6.5pt]examl-1.south);
+
+    \node[below right,yshift=-1.3cm,xshift=0.75cm,desc] (dxml) at(xml) {Komponente};
+    \draw[densely dashed] (dxml) -- (xml);
+
+    \node[below right,yshift=-0.95cm,xshift=0cm,desc] (dlear) at(lear) {Artefakt};
+    \draw[densely dashed] (dlear) -- (lear);
+
+    \node[below right,yshift=-0.95cm,xshift=0cm,desc] (dlear) at(lear) {Artefakt};
+    \draw[densely dashed] (dlear) -- (lear);
+
+    \node[right,yshift=-0.25cm,xshift=1.125cm,desc] (dmanifest) at(manifest) {Implementierungs-\\Beziehung};
+    \draw[densely dashed] (dmanifest) -- (manifest);
+
+    \node[right,yshift=-0.25cm,xshift=1.25cm,desc] (dsathalf) at(sathalf) {Abhängigkeit};
+    \draw[densely dashed] (dsathalf) -- (sathalf);
+
+    \node[above left,yshift=0.25cm,xshift=-1.25cm,desc] (dcomplex) at($(tv.13)-(0.125,0)$) {Komplexer Port};
+    \draw[densely dashed] (dcomplex) -- ($(tv.13)-(0.125,0)$);
+\end{tikzpicture}}
+    \caption{Ein volles Modell.}
+    \label{fig:example-model}
+\end{model}
+
+
+\begin{model}
+    \tikzumlset{fill usecase=gray!5!white}
+    \resizebox{\linewidth}{!}{%
+\begin{tikzpicture}
+    \begin{scope}[every node/.style={font=\scriptsize}]
+        \begin{umlsystem}[x=4]{Hexxagon}
+            \umlusecase[name=main-menu]{Hauptmenü anzeigen}
+            \umlusecase[name=lobby,y=-2]{Lobbys verwalten}
+
+            \umlusecase[name=create,y=-1,x=-4]{Lobby Erstellen}
+            \umlusecase[name=enter,y=-1,x=+4]{Lobby beitreten/verlassen}
+
+            \umlusecase[name=play,y=-4]{Hexxagon spielen}
+
+            \umlusecase[name=mv-stone,y=-5,x=+4]{Stein bewegen}
+            \umlusecase[name=game-over,y=-6]{Game-Over B. anzeigen}
+            \umlusecase[name=show-game,y=-5,x=-4]{Spiel darstellen}
+        \end{umlsystem}
+        \umlactor[x=-4]{Benutzer}
+
+        \umlassoc{Benutzer}{main-menu}
+
+        \umlactor[x=13, y=-2.5]{Server}
+
+        \umlassoc{Server}{enter}
+        \umlassoc{Server}{mv-stone}
+        \umlHVassoc[anchors=180 and 200]{Server}{create}
+
+
+        \def\tikzumlRelationStereoTypeStyle{rotate=90,yshift=-0.25cm,font=\noexpand\noexpand\noexpand\tiny}
+        \umlinclude[name=incl]{main-menu}{lobby}
+        \umlinclude[name=incl]{lobby}{play}
+        \umlinclude[name=incl]{play}{game-over}
+
+        \def\tikzumlRelationStereoTypeStyle{yshift=-0.25cm}
+        \umlHVinclude[name=lcre]{lobby}{create}
+        \umlHVinclude[name=lbetr]{lobby}{enter}
+
+        \def\tikzumlRelationStereoTypeStyle{yshift=0.25cm}
+        \umlHVinclude[name=lmov]{play}{mv-stone}
+        \umlHVinclude[name=lshow]{play}{show-game}
+    \end{scope}
+\end{tikzpicture}}
+    \caption{Ein weiteres volles Modell.}
+    \label{fig:example-model2}
+\end{model}
+\end{document}

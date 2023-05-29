@@ -1,0 +1,188 @@
+\documentclass[ngerman]{article}
+\usepackage[a4paper,total={18cm,25.5cm}]{geometry}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+
+\usepackage{microtype,hyperref,array,enumitem,longtable,needspace}
+\usepackage{babel}
+
+\usepackage[hyperref,enumitem,addons]{color-palettes}
+
+\usepackage{imakeidx}
+\makeindex[title=Befehlsübersicht,columns=2,columnsep=.75cm]
+\def\indexname{Befehlsübersicht}
+
+\UsePalette{IceLake}
+
+\def\say#1{\glqq{#1}\grqq{}}
+
+\def\cmd#1{\texttt{\paletteA{\textbackslash#1}}}
+\def\cmdlink#1{\phantomsection\label{cmd:#1}\cmd{#1}}
+\def\cmdref#1{\hyperref[cmd:#1]{\cmd{#1}}}
+
+\def\arg#1{\textit{\paletteB{#1}}}
+\def\manArg#1{\texttt{\{\,\arg{#1}\,\}}}
+\def\optArg#1{\texttt{[\,\arg{#1}\,]}}
+
+\def\secref#1{\hyperref[#1]{\ref*{#1} \nameref*{#1}}}
+
+\long\def\imp#1{\emph{\paletteD{#1}}}
+
+\newenvironment{command}[3][v1.0]{\leavevmode\\[-\baselineskip]\hspace*{-1.75em}\index{#2?\cmdref{#2}}\cmdlink{#2}\,#3\hfill{}\texttt{#1}\nopagebreak\smallskip\\*}{\bigskip\par{}}
+
+\parindent0pt
+\parskip.35\baselineskip plus .15\baselineskip minus .05\baselineskip
+
+\title{\textsf{\paletteD{\{}\paletteA{color-palettes.sty}\paletteD{\}}}}
+\author{Florian Sihler}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+    Dieses Paket dient der Handhabung von Farbpaletten. Es liefert Makros zur einfachen Definition vierfarbiger Paletten, die sich an die jeweilige Umgebung anpassen und auch
+    gewechselt werden können.
+\end{abstract}
+
+\tableofcontents
+
+\section{Nutzermakros}
+
+\begin{command}{DefinePalette}{\manArg{Name}\manArg{A}\manArg{B}\manArg{C}\manArg{D}}
+    Definiert die Palette \arg{Name} ungeachtet ob sie bereits existiert (sollte sie bereits existieren, wird sie überschrieben). Die folgenden 4 Argumente \arg{A} bis \arg{D} müssen im folgenden Format präsentiert werden und definieren die jeweilige Farbe:
+\begin{verbatim}
+<noun>,<adjective>: <format>(<specification>)
+\end{verbatim}
+Exemplarisch sei hier die Definition von \emph{IceLake}\footnote{Da die Paletten immer wieder aktualisiert werden, müssen die angegebenen RGB-Werte nicht exakt denen entsprechen, die das Paket präsentiert. Das System ist allerdings identisch.} präsentiert:
+\begin{verbatim}
+\DefinePalette{IceLake}
+    {Dunkelblau,dunkelbläulich: RGB(049, 068, 095)}
+    {Blau,bläulich:             RGB(082, 115, 143)}
+    {Hellblau,hellbläulich:     RGB(113, 151, 172)}
+    {Rot,rötlich:               RGB(137, 064, 075)}
+\end{verbatim}
+\imp{Der Name einer Palette darf nicht leer sein!}
+
+Die Farben stehen anschließend unter den Bezeichnern \texttt{paletteA}, \texttt{paletteB}, \texttt{paletteC} und \texttt{paletteD} zur Verfügung. Weiter wird für jede Farbe \texttt{shadeA}, \texttt{shadeB}, \texttt{shadeC} und \texttt{shadeD} als Farbe erzeugt. Es sind die helleren Varianten in \secref{sec:predefined-palletes}.
+\end{command}
+
+\begin{command}{CurrentPalette}{}
+    Dieser Befehl enthält den Bezeichner der aktuellen Palette. Er sollte nur \say{gelesen} und nicht geschrieben werden. Da in den meisten Dokumenten nur eine Palette eingesetzt wird, sollte seine Bedeutung (außerhalb des Pakets) eher gering sein.
+\end{command}
+
+\begin{command}{UsePalette}{\manArg{Name}}
+    Setzt die aktuelle Palette auf \arg{Name}, wirft einen Fehler wenn die Palette nicht existiert. Ein leerer Bezeichner sorgt für eine Löschung der aktuellen Paletten-Befehle.
+\end{command}
+
+\begin{command}{ShowcasePalette}{\manArg{Name}}
+    Ändert für den Befehl die Palette mittels \cmdref{UsePalette} auf \arg{Name} und wechselt dann zur vorherigen Palette zurück. Zur Anzeige wird \cmdref{ShowcaseCurrentPalette} verwendet.
+\end{command}
+
+\begin{command}{ShowcaseCurrentPalette}{}
+    Zeigt die aktuelle Palette in Form einer Tabelle an (die Gestalt kann sich über die Versionen durchaus ändern). Die Anzeige wird auch in \secref{sec:predefined-palletes} verwendet.
+\end{command}
+
+\begin{command}{palette*name}{}
+    Das Sternchen steht hierbei für die Bezeichner \emph{A}, \emph{B}, \emph{C} beziehungsweise \emph{D}. Der Befehl expandiert zum Namen der jeweiligen Farbe. So zum Beispiel (verwendet wird \CurrentPalette) wird \cmd{paletteAname} zu \say{\paletteAname}.
+\end{command}
+
+\begin{command}{palette*adj}{}
+    Das Sternchen steht hierbei für die Bezeichner \emph{A}, \emph{B}, \emph{C} beziehungsweise \emph{D}. Der Befehl expandiert zum adjektiv der jeweiligen Farbe. So zum Beispiel (verwendet wird \CurrentPalette) wird \cmd{paletteAadj} zu \say{\paletteAadj}.
+\end{command}
+
+\begin{command}[v1.1]{palette*}{\manArg{text}}
+    Das Sternchen steht hierbei für die Bezeichner \emph{A}, \emph{B}, \emph{C} beziehungsweise \emph{D}. Der Befehl ist eine Kurzform für \texttt{\cmdref{textcolor}\{palette*\}\manArg{Text}} So ergibt \texttt{\cmd{paletteA}\{Hallo Welt\}} folgendes Ergebnis: \paletteA{Hallo Welt}.
+\end{command}
+
+\begin{command}[v1.1]{SetShadeContrast}{\manArg{num}}
+    Erlaubt es den Kontrast der \texttt{shade*}-Farben zu setzen. Der Wert \arg{num} muss zwischen 0 und 100 liegen, der Standardwert ist \makeatletter\cpl@shade@contrast\makeatother.
+\end{command}
+
+\begin{command}[v1.1]{WithPalette}{\manArg{Name}\manArg{Text/Code}}
+    Setzt \arg{Text/Code} in der Palette mit Bezeichner \arg{Name}. Anschließend wird zur vorherigen Palette zurückgewechselt.
+\end{command}
+
+\begin{command}[v1.1]{AllPalettes}{}
+    Liefert eine Liste alle definierten Paletten: \say{\AllPalettes}.
+\end{command}
+
+\section{Paketoptionen}
+\label{sec:packetoptions}Das Paket kann (\texttt{v1.1}) mit den Optionen \texttt{hyperref}/\texttt{nohyperref} geladen werden. Die
+Angabe von \texttt{hyperref} fordert, dass das gleichnamige Paket geladen ist und
+setzt die Linkfarben entsprechend der Palette neu. Beispiel:
+\WithPalette{SourCandy}{\hyperref[sec:packetoptions]{Link in \CurrentPalette}}, \hyperref[sec:packetoptions]{Link in \CurrentPalette} und \WithPalette{BloodyGrass}{\hyperref[sec:packetoptions]{Link in \CurrentPalette}}.
+
+Ebenso gibt es die Paketoptionen (\texttt{v1.1}) \texttt{enumitem}/\texttt{noenumitem} die bei geladenem gleichnamigen Paket die Gestalt\footnote{Nach aktuellem Stand wird automatisch \texttt{amssymb} geladen.} von \emph{itemize} verändern:
+\begin{center}
+    \begin{tabular}{*3{m{0.3\linewidth}}}
+        \begin{itemize}
+            \item Itemize in
+            \item Palette \CurrentPalette
+            \item \ldots
+        \end{itemize} & {\UsePalette{SourCandy}\begin{itemize}
+            \item Itemize in
+            \item Palette \CurrentPalette
+            \item \ldots
+        \end{itemize}} & {\UsePalette{BloodyGrass}\begin{itemize}
+            \item Itemize in
+            \item Palette \CurrentPalette
+            \item \ldots
+        \end{itemize}}
+    \end{tabular}
+\end{center}
+
+Weiter gibt es mit \texttt{v1.1} die Paketoptionen \texttt{defaults}/\texttt{nodefaults}, wobei standardmäßig erstere Gesetzt ist. Im Falle von Defaults wird automatisch die Palette \makeatletter\emph{\cpl@default@palette}\makeatother{} geladen.
+
+Durch \texttt{addons}/\texttt{noaddons} (\texttt{v1.1}) kann weiter kontrolliert werden, ob die \secref{sec:addon-palletes} geladen werden.
+
+Mit der Version \texttt{v1.2} kam dann die Paketoption \texttt{lithieboxes} hinzu (Gegenoption: \texttt{nolithieboxes}). Diese hat nur einen Effekt wenn auch \texttt{enumitem} aktiv ist, sorgt dann aber dafür, dass die damit gesetzten Farben sich an die jeweilige Box anpassen. Eine Unterstützung für \texttt{hyperref} ist aktuell nicht geplant da für diese Handhabung \texttt{lecture-links} aus der \href{https://github.com/EagleoutIce/lithie-util}{lithie-util} Sammlung eine viel bessere Unterstützung liefert.
+
+Durch \texttt{debug}/\texttt{nodebug} (\texttt{v1.2}) können zusätzliche log-Ausgaben gesteuert werden.
+
+\section{Versionierung}
+\subsection{Version 1.0}
+Grundlegende Kommandos hinzugefügt. Darunter: \cmdref{DefinePalette}, \cmdref{CurrentPalette}, \cmdref{UsePalette}, \cmdref{ShowcasePalette} und \cmdref{ShowcaseCurrentPalette}.
+\subsection{Version 1.1}
+Die \hyperref[sec:packetoptions]{Paketoptionen} \texttt{hyperref} und \texttt{enumitem} wurden hinzugefügt. Einige Paletten wurden aktualisiert und die Befehle \cmdref{SetShadeContrast}, wie auch \cmdref{WithPalette} sowie \cmdref{AllPalettes} eingeführt.
+\subsection{Version 1.2}
+Die \hyperref[sec:packetoptions]{Paketoption} \texttt{lithieboxes} wurde hinzugefügt.
+
+\clearpage
+\section{Vordefinierte Paletten}
+\label{sec:predefined-palletes}
+{\scriptsize
+\begin{longtable}{@{}c@{\hskip-1cm}c@{}}
+    \ShowcasePalette{Water} & \ShowcasePalette{Lucy} \\[6em]
+    \ShowcasePalette{GreenWater} & \ShowcasePalette{Evening} \\[6em]
+    \ShowcasePalette{Peach} & \ShowcasePalette{LavenderField} \\[6em]
+    \ShowcasePalette{IceLake} & \ShowcasePalette{Crimson} \\[6em]
+    \ShowcasePalette{NorthernLights} & \ShowcasePalette{GrayPrint} \\[6em]
+    \ShowcasePalette{BoringElegance} & \ShowcasePalette{RainbowElegance}
+\end{longtable}
+}
+
+\needspace{17\baselineskip}\section{Zusätzliche Paletten}
+\label{sec:addon-palletes}Diese Paletten werden durch die \hyperref[sec:packetoptions]{Paketoption} \texttt{addons} aktiviert:\null\vfill
+{\scriptsize
+\begin{longtable}{@{}c@{\hskip-1cm}c@{}}
+    \ShowcasePalette{GraySun} & \ShowcasePalette{UniInfo} \\[6em]
+    \ShowcasePalette{UniMawi} & \ShowcasePalette{UniNawi} \\[6em]
+    \ShowcasePalette{UniMed} & \ShowcasePalette{Ntts} \\[6em]
+    \ShowcasePalette{PastelRainbow} & \ShowcasePalette{Vampire} \\[6em]
+    \ShowcasePalette{ClayGrass} & \ShowcasePalette{PurpleCoin} \\[6em]
+    \ShowcasePalette{Beach} & \ShowcasePalette{Sand} \\[6em]
+    \ShowcasePalette{DarkDiamond} & \ShowcasePalette{Moonshine} \\[6em]
+    \ShowcasePalette{Legacy} & \ShowcasePalette{LegacyPrint} \\[6em]
+    \ShowcasePalette{SourCandy} & \ShowcasePalette{PurpleSand} \\[6em]
+    \ShowcasePalette{BloodyGrass} & \ShowcasePalette{Rainbow}
+\end{longtable}}
+\vfill\null
+
+
+\clearpage\appendix
+\addcontentsline{toc}{section}{\indexname}
+\printindex
+\end{document}

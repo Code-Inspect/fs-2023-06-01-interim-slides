@@ -1,0 +1,141 @@
+\errorcontextlines9999
+\documentclass[aspectratio=169,usepdftitle=true,handout]{beamer}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{microtype}
+\usepackage[english,main=ngerman]{babel}
+
+% \colorlet{mycolor}{green!70!yellow!80!orange!85!black} % todo
+% color=mycolor
+\usetheme[lightmode-fill]{digital-minimal}
+
+\title{Example Presentation}
+\titlenumber{1}
+\setauthormailsubject{Tutorium\%201}
+\subtitle{The bandits are coming}
+
+\date[14.08.2020]{14. August 2020}
+
+\author[F.~Sihler]{Florian Sihler}
+\email{florian.sihler@uni-ulm.de}
+
+\usepackage[backend=bibtex8,style=alphabetic]{biblatex}
+\usepackage{csquotes}
+\addbibresource{example.bib}
+
+\setfootmarker{EidI~\faAngleRight\ Tutorium 1}
+
+\outro{\vfill\begin{center}
+    \huge\itshape Danketsöön
+\end{center}\vfill}
+
+\begin{document}
+
+\titleframe
+\section{Theoretische Grundlagen}
+\subsection{Der Algorithmusbegriff}
+\begin{frame}{Was ist ein Algorithmus?}
+    \begin{itemize}
+        \item Es existieren verschiedene Darstellungsformen: \begin{itemize}
+            \item Textuell (1. Tue dies, 2. Tue das, 3. Falls \(X\)\ldots)
+            \item Grafisch (Instruktionsabläufe, Graphen, Grafiken, \ldots)
+            \item Pseudocode
+        \end{itemize}
+        \item Klassische Alltagsbeispiele: (Koch-)Rezepte, Gebrauchsanleitungen, \ldots
+    \end{itemize}
+\end{frame}
+
+\subsection{Algorithmen analysieren}
+\begin{frame}{Algorithmuseigenschaften}
+    \begin{itemize}[<+(1)->]
+        \item Zu Beginn gilt es einige Begriffe zu klären: \begin{description}[Elementaroperation]
+            \item[Prozess] Die Ausführung der Schritte eines Algorithmus
+            \item[Prozessor] Der Ausführende (Mensch, Computer, \ldots)
+            \item[Elementaroperation] Eine einzelne, eindeutige Handlung.
+        \end{description}
+    \end{itemize}
+\end{frame}
+
+\section{Excalibur}
+\begin{frame}[fragile]{Eigenschaften für die Analyse}
+    \begin{itemize}
+        \item Die Begriffe sind zu unterscheiden!
+\begin{equation*}
+    \phi = \int_0^{\pi^2} \frac{12 \cdot \alpha - \frac{7}{alabasta}}{\lfloor \rho - \tau\rfloor}
+\end{equation*}
+        \item So können bei einem Algorithmus verschiedene Wege zum selben Ziel führen.
+        \item (Sinnfreies) Beispiel: Der Algorithmus kann jedes Element eines Arrays quadrieren. Die Reihenfolge wählt er zufällig aus!
+        \item Dieser Algorithmus \emph{determiniert}, ist aber \emph{nicht-deterministisch}!
+    \end{itemize}
+\end{frame}
+
+\section{Excommunicado}
+\subsection{This is an example}
+
+\begin{frame}{Mega-Example 1}
+    Hello \cite{knuth-fa}!
+\end{frame}
+
+\begin{frame}{Mega-Example 2}
+    World
+\end{frame}
+
+\subsection{This is an example, 2}
+
+\begin{frame}{Mega-Example 1}
+    Hello
+\end{frame}
+
+\begin{frame}{Mega-Example 2}
+    World \cite{knuth-web}!
+\end{frame}
+
+\section{Talk the talker}
+\subsection{This is an example}
+
+\begin{frame}{Mega-Example 1}
+    Hello \cite{dirac}!
+\end{frame}
+
+\subsection{This is Ex}
+\begin{frame}{Mega-Example 2}
+    World as seen in \cite{einstein}.
+\end{frame}
+
+\subsection{This is an example, 2}
+
+\begin{frame}{Mega-Example 1}
+    Hello
+\end{frame}
+
+\begin{frame}{Mega-Example 2}
+    World
+\end{frame}
+
+
+\section{Conclusion}
+\subsection{This is an example}
+
+\begin{frame}{Mega-Example 1}
+    Hello
+\end{frame}
+
+\begin{frame}{Mega-Example 2}
+    World
+\end{frame}
+
+\subsection{This is an example, 2}
+
+\begin{frame}{Mega-Example 1}
+    Hello
+\end{frame}
+
+\begin{frame}{Mega-Example 2}
+    World
+\end{frame}
+
+\begin{frame}{Bibliography}
+    \printBibCommand
+\end{frame}
+\end{document}
