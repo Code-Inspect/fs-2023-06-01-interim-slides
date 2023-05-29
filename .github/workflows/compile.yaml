@@ -20,12 +20,12 @@ jobs:
         uses: xu-cheng/latex-action@v2
         with:
           # ensure local
-          root_file: fs-kickoff-2023-05-05-slicing.tex
+          root_file: fs-2023-06-01-interim-slides.tex
       - name: Commit
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add -f "build/fs-kickoff-2023-05-05-slicing.pdf"
+          git add -f "build/fs-2023-06-01-interim-slides.pdf"
           git commit -m "Newly compiled data"
       - name: Push changes
         uses: ad-m/github-push-action@master
