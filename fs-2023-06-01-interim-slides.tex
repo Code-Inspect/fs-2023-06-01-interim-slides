@@ -144,16 +144,23 @@
 \begin{tabular}{lrr}
    \multicolumn{3}{c}{\textbf{Comments}} \\
    & \textit{Package Code} & \textit{User Code} \smallskip\\
-   Roxygen/Total &492\,510/884\,950 & 1\,486/311\,344 \bigskip\\
+   Roxygen/Total &492\,510/884\,950 & 1\,486/311\,344 \smallskip\\
    \multicolumn{3}{c}{\textbf{Used Imports}} \\
-   & \textit{Package Code} & \textit{User Code} \smallskip\\
+   % & \textit{Package Code} & \textit{User Code} \smallskip\\
    \T{@import} & 305 & 8  \\
    \T{@importFrom} & 5\,587& 6 \\
    \T{@importClassesFrom} & 6 & 0\\
    \T{@importMethodsFrom} & 8 & 0\\
-   \T{@useDynLib} & 605 & 0\\
+   \T{@useDynLib} & 605 & 0\smallskip\\
+   \multicolumn{3}{c}{\textbf{Used Exports}} \\
+   % & \textit{Package Code} & \textit{User Code} \smallskip\\
+   \T{@export} & 33\,186 & 13  \\
+   \T{@exportClass} & 27& 0 \\
+   \T{@exportMethod} & 81& 0\\
+   \T{@exportS3Method} & 14& 0\\
+   \T{@exportPattern} & 1& 0\\
+   % TODO: evalNamespace | rawNamespace
 \end{tabular}
-TODO: exports
 \end{onlyenv}
 \begin{onlyenv}<5|handout:3>
 \begin{tabular}{lrr}
