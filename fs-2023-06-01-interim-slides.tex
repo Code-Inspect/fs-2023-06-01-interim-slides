@@ -1,5 +1,5 @@
 % presentation | handout
-\documentclass[aspectratio=169,usepdftitle=true,presentation,10pt]{beamer}
+\documentclass[aspectratio=169,usepdftitle=true,handout,10pt]{beamer}
 
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
@@ -7,6 +7,7 @@
 \usepackage{microtype}
 
 \usepackage{etoolbox,tabularx,array}
+\usepackage{fp}
 \makeatletter
 \appto\input@path{{lib/color-palettes/}{lib/sopra-collection/sopra-listings}{lib/code-animation/}}
 
@@ -78,8 +79,12 @@
 
 \section[Feature Extraction]{Feature Extraction}
 \def\Package#1{\T{\link{https://www.rdocumentation.org/packages/stats/#1}{#1}}}
-\def\rotHead#1{\llap{\rotatebox{-52}{{\rlap{\scriptsize#1}}}}}
+\def\rotHead#1{\llap{\rotatebox{-52}{{\rlap{\tiny#1}}}}}
 \newcommand<>\HItem[1]{\def\Mixin{30!white}\only#2{\def\Mixin{}}\begin{colormixin}{\Mixin}\item#1\end{colormixin}}
+\colorlet{@back}{gray!90!white}
+\def\Perc#1#2{\qty[round-precision=2,round-mode=places]{#1}\percent\llap{\raisebox{-5pt}{\scalebox{.6}{\small\color{@back}\num[group-digits,group-minimum-digits=4,group-separator={\,}]{#2}}}}}
+\def\CurrentSum{1}
+\newcommand\Print[2][\CurrentSum]{\FPdiv\Out{#2}{#1}\FPmul\Out{\Out}{100}\Perc{\Out}{#2}}
 \begin{frame}[c]{\insertsection}
 \def\arraystretch{1.15}\vspace*{-\medskipamount}%
 \begin{columns}[onlytextwidth,c]
@@ -102,16 +107,18 @@
 \column{.69\linewidth}
 \footnotesize\centering
 \begin{onlyenv}<3|handout:1>
+\def\P{23701}\def\U{20853}% Total Imports
+% \def\P{25691}\def\ % based on files
 \begin{tabular}{rl@{\hskip4em}rl}
    \multicolumn{4}{c}{\textbf{Top imported packages}} \\
    \multicolumn{2}{c}{\textit{Package Code}} & \multicolumn{2}{c}{\textit{User Code}} \smallskip\\
-   1\,112 & \Package{stats} & 1\,212 & \Package{ggplot2}   \\
-    934 & \Package{utils}   & 1\,179 & \Package{dplyr}     \\
-    848 & \Package{dplyr}   &  772 & \Package{tidyverse} \\
-    812 & \Package{rlang}   &  623 & \Package{lme4}      \\
-    802 & \Package{testhat} &  455 & \Package{car}       \\
-    674 & \Package{cli}     &  408 & \Package{plyr}      \\
-    661 & \Package{withr}   &  319 & \Package{tidyr}     \\
+   \Print[\P]{1112} & \Package{stats}  & \Print[\U]{1212} & \Package{ggplot2}   \\
+   \Print[\P]{934} & \Package{utils}   & \Print[\U]{1179} & \Package{dplyr}     \\
+   \Print[\P]{848} & \Package{dplyr}   & \Print[\U]{772} & \Package{tidyverse} \\
+   \Print[\P]{812} & \Package{rlang}   & \Print[\U]{623} & \Package{lme4}      \\
+   \Print[\P]{802} & \Package{testhat} & \Print[\U]{455} & \Package{car}       \\
+   \Print[\P]{674} & \Package{cli}     & \Print[\U]{408} & \Package{plyr}      \\
+   \Print[\P]{661} & \Package{withr}   & \Print[\U]{319} & \Package{tidyr}     \\
 \end{tabular}\bigskip\\
 % \begin{tabular}{lrr}
 %    \multicolumn{3}{c}{\textbf{Ways of Import}} \\
@@ -126,10 +133,10 @@
 % \T{*apply} & 21 & 42 \\
 % \T{attachNamespace} & 2 & 0 \\
 % \end{tabular}
-\begin{tabular}{l rrr rrr rrr}
+\begin{tabular}{l *9{@{\hskip3pt}r}}
    \multicolumn{10}{c}{\textbf{Ways of import}} \smallskip\\
-   \textit{Package} & 15\,788 & 637 & 5\,224 & 911 & 887 & 165 & 66 & 21 & 2\\
-   \textit{User} & 1\,876 & 42 & 17\,349 & 1\,514 & 24 & 6 & 0 & 42 & 0\\
+   \textit{Package} & \Print[\P]{15788} & \Print[\P]{637} & \Print[\P]{5224} & \Print[\P]{911} & \Print[\P]{887} & \Print[\P]{165} & \Print[\P]{66} & \Print[\P]{21} & \Print[\P]{2}\\
+   \textit{User} & \Print[\U]{1876} & \Print[\U]{42} & \Print[\U]{17349} & \Print[\U]{1514} & \Print[\U]{24} & \Print[\U]{6} & \Print[\U]{0} & \Print[\U]{42} & \Print[\U]{0}\\
    & \rotHead{::} & \rotHead{:::} & \rotHead{library} & \rotHead{require} & \rotHead{req.Ns.} & \rotHead{by variable} & \rotHead{load Ns.} & \rotHead{*apply} & \rotHead{attach Ns.}
 \end{tabular}\qquad~~
 \end{onlyenv}
@@ -146,6 +153,7 @@
    \T{@importMethodsFrom} & 8 & 0\\
    \T{@useDynLib} & 605 & 0\\
 \end{tabular}
+TODO: exports
 \end{onlyenv}
 \begin{onlyenv}<5|handout:3>
 \begin{tabular}{lrr}
