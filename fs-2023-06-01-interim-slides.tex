@@ -82,11 +82,11 @@
 \def\rotHead#1{\llap{\rotatebox{-52}{{\rlap{\tiny#1}}}}}
 \newcommand<>\HItem[1]{\def\Mixin{30!white}\only#2{\def\Mixin{}}\begin{colormixin}{\Mixin}\item#1\end{colormixin}}
 \colorlet{@back}{gray!90!white}
-\def\Perc#1#2{\qty[round-precision=2,round-mode=places]{#1}\percent\llap{\raisebox{-5pt}{\scalebox{.6}{\small\color{@back}\num[group-digits,group-minimum-digits=4,group-separator={\,}]{#2}}}}}
+\def\Perc#1#2{\bgroup\smaller\qty[round-precision=2,round-mode=places]{#1}\percent\llap{\raisebox{-5pt}{\scalebox{.6}{\small\strut\color{@back}\num[group-digits,group-minimum-digits=4,group-separator={\,}]{#2}}}}\egroup}
 \def\CurrentSum{1}
 \newcommand\Print[2][\CurrentSum]{\FPdiv\Out{#2}{#1}\FPmul\Out{\Out}{100}\Perc{\Out}{#2}}
 \begin{frame}[c]{\insertsection}
-\def\arraystretch{1.15}\vspace*{-\medskipamount}%
+\def\arraystretch{1.2}\vspace*{-\medskipamount}%
 \begin{columns}[onlytextwidth,c]
 \column{.3\linewidth}
 \begin{uncoverenv}<2->
@@ -118,8 +118,8 @@
    \Print[\P]{812} & \Package{rlang}   & \Print[\U]{623} & \Package{lme4}      \\
    \Print[\P]{802} & \Package{testhat} & \Print[\U]{455} & \Package{car}       \\
    \Print[\P]{674} & \Package{cli}     & \Print[\U]{408} & \Package{plyr}      \\
-   \Print[\P]{661} & \Package{withr}   & \Print[\U]{319} & \Package{tidyr}     \\
-\end{tabular}\bigskip\\
+   % \Print[\P]{661} & \Package{withr}   & \Print[\U]{319} & \Package{tidyr}     \\
+\end{tabular}\smallskip\\
 % \begin{tabular}{lrr}
 %    \multicolumn{3}{c}{\textbf{Ways of Import}} \\
 %    & \textit{Package Code} & \textit{User Code} \smallskip\\
@@ -136,22 +136,22 @@
 \begin{tabular}{l *9{@{\hskip3pt}r}}
    \multicolumn{10}{c}{\textbf{Ways of import}} \smallskip\\
    \textit{Package} & \Print[\P]{15788} & \Print[\P]{637} & \Print[\P]{5224} & \Print[\P]{911} & \Print[\P]{887} & \Print[\P]{165} & \Print[\P]{66} & \Print[\P]{21} & \Print[\P]{2}\\
-   \textit{User} & \Print[\U]{1876} & \Print[\U]{42} & \Print[\U]{17349} & \Print[\U]{1514} & \Print[\U]{24} & \Print[\U]{6} & \Print[\U]{0} & \Print[\U]{42} & \Print[\U]{0}\\
-   & \rotHead{::} & \rotHead{:::} & \rotHead{library} & \rotHead{require} & \rotHead{req.Ns.} & \rotHead{by variable} & \rotHead{load Ns.} & \rotHead{*apply} & \rotHead{attach Ns.}
+   \textit{User} & \Print[\U]{1876} & \Print[\U]{42} & \Print[\U]{17349} & \Print[\U]{1514} & \Print[\U]{24} & \Print[\U]{6} & \Print[\U]{0} & \Print[\U]{42} & \Print[\U]{0}\vspace*{-\medskipamount}\\
+   & \rotHead{::} & \rotHead{:::} & \rotHead{lib.} & \rotHead{req.} & \rotHead{req.Ns.} & \rotHead{var.} & \rotHead{load.} & \rotHead{*apply} & \rotHead{attach.}
 \end{tabular}\qquad~~
 \end{onlyenv}
 \begin{onlyenv}<4|handout:2>
 \begin{tabular}{lrr}
    \multicolumn{3}{c}{\textbf{Comments}} \\
    & \textit{Package Code} & \textit{User Code} \smallskip\\
-   Roxygen/Total &492\,510/884\,950 & 1\,486/311\,344 \smallskip\\
+   Roxygen/Total &492\,510/884\,950 & 1\,486/311\,344 \\
    \multicolumn{3}{c}{\textbf{Used Imports}} \\
    % & \textit{Package Code} & \textit{User Code} \smallskip\\
    \T{@import} & 305 & 8  \\
    \T{@importFrom} & 5\,587& 6 \\
    \T{@importClassesFrom} & 6 & 0\\
    \T{@importMethodsFrom} & 8 & 0\\
-   \T{@useDynLib} & 605 & 0\smallskip\\
+   \T{@useDynLib} & 605 & 0\\
    \multicolumn{3}{c}{\textbf{Used Exports}} \\
    % & \textit{Package Code} & \textit{User Code} \smallskip\\
    \T{@export} & 33\,186 & 13  \\
@@ -163,30 +163,32 @@
 \end{tabular}
 \end{onlyenv}
 \begin{onlyenv}<5|handout:3>
+\def\P{131953}\def\U{12122}%
 \begin{tabular}{lrr}
 % \multicolumn{3}{c}{\textbf{Defined Functions}} \\
 & \textit{Package Code} & \textit{User Code} \smallskip\\
-\T{Total} & 131\,953 & 12\,122  \\
-\T{Lambdas} & 22 & 0 \\
-\T{Assigned} & 96\,161& 6\,821\\
-\T{Direct-Call} & 91& 0\\
-\T{Nested} & 25\,521& 2\,240\\
-\T{Recursive} & 1\,058& 10\\
+\T{Total}       & 131\,953 & 12\,122  \\
+\T{Lambdas}     & \Print[\P]{22}       & \Print[\U]{0}  \\
+\T{Assigned}    & \Print[\P]{96161}    & \Print[\U]{6821} \\
+\T{Direct-Call} & \Print[\P]{91}       & \Print[\U]{0} \\
+\T{Nested}      & \Print[\P]{25521}    & \Print[\U]{2240} \\
+\T{Recursive}   & \Print[\P]{1058}     & \Print[\U]{10} \\
 \end{tabular}
 \end{onlyenv}
 % Function calls
 \begin{onlyenv}<6|handout:4>
+\def\P{1956887}\def\U{980964}%
 \begin{tabular}{rl@{\hskip4em}rl}
 % \multicolumn{3}{c}{\textbf{Called Functions}} \\
 \multicolumn{2}{c}{\textit{Package Code}} & \multicolumn{2}{c}{\textit{User Code}} \smallskip\\
 1\,956\,887 & \textit{all} & 980\,964 & \textit{all} \\
-133\,650 & \T{c}                & 110,020 & \T{c}   \\
- 57\,398 & \T{list}             &  19,849 & \T{length}     \\
- 56\,842 & \T{length}           &  18,975 & \T{library} \\
- 50\,534  & \T{expect\_equal}   &  18,797 & \T{summary}      \\
- 42\,279  & \T{is.null}         &  18,009 & \T{aes}       \\
- 37\,238  & \T{test\_that}      &  16,303 & \T{list}      \\
- 33\,688  & \T{return}          &  13,162 & \T{element\_text}     \\
+\Print[\P]{133650} & \T{c}                & \Print[\U]{110020} & \T{c}   \\
+\Print[\P]{57398} & \T{list}             &  \Print[\U]{19849} & \T{length}     \\
+\Print[\P]{56842} & \T{length}           &  \Print[\U]{18975} & \T{library} \\
+\Print[\P]{50534}  & \T{expect\_equal}   &  \Print[\U]{18797} & \T{summary}      \\
+\Print[\P]{42279}  & \T{is.null}         &  \Print[\U]{18009} & \T{aes}       \\
+\Print[\P]{37238}  & \T{test\_that}      &  \Print[\U]{16303} & \T{list}      \\
+\Print[\P]{33688}  & \T{return}          &  \Print[\U]{13162} & \T{element\_text}     \\
 \end{tabular}
 \end{onlyenv}
 \begin{onlyenv}<7|handout:5>
@@ -235,9 +237,9 @@
 % \multicolumn{3}{c}{\textbf{Defined Functions}} \\
 & \textit{Package Code} & \textit{User Code} \smallskip\\
 {if-then-else}    & 216\,722 & 13\,773 \\
-\quad{nested} & 152\,022 & 9\,711 \\
-\quad{constant} & 750 & 69 \\
-\quad{variable} & 24\,844 & 723\\
+\quad{nested} & \Print[216722]{152022} & \Print[13773]{9711} \\
+\quad{constant} & \Print[216722]{750} & \Print[13773]{69} \\
+\quad{variable} & \Print[216722]{24844} & \Print[13773]{723} \\
 switch-case & 3\,421 & 46 \\
 \end{tabular}
 \end{onlyenv}
@@ -246,14 +248,14 @@ switch-case & 3\,421 & 46 \\
 % \multicolumn{3}{c}{\textbf{Defined Functions}} \\
 & \textit{Package Code} & \textit{User Code} \smallskip\\
 \T{[}           & 186\,893 & 188\,888\\
-\quad{empty}   &  1\,257 & 204\\
-\quad{constant} & 43\,684 & 39\,587\\
-\quad{variable} & 63\,805 & 42\,970\\
+\quad{empty}   &  \Print[186893]{1257} & \Print[188888]{204}\\
+\quad{constant} & \Print[186893]{43684} & \Print[188888]{39587}\\
+\quad{variable} & \Print[186893]{63805} & \Print[188888]{42970}\\
 % \quad{comma} &  & \\
 \T{[[}           & 62\,904 & 17\,248\\
-\quad{empty}   & 10 & 0 \\
-\quad{constant} & 30\,508 & 8\,601 \\
-\quad{variable} & 29\,625  & 8\,011 \\
+\quad{empty}   & \Print[62904]{10} & \Print[17248]{0} \\
+\quad{constant} & \Print[62904]{30508} & \Print[17248]{8601} \\
+\quad{variable} & \Print[62904]{29625}  & \Print[17248]{8011} \\
 chained & 87\,134 & 90\,362\\
 by name & 271\,577 & 283\,081\\% or nested
 by slot & 19\,980 & 3\,198\\
